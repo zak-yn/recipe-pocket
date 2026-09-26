@@ -169,5 +169,114 @@
       }
     ],
     "proTips": "卵をフライパンに流し入れた際は、強火で素早くかき混ぜて空気を含ませることで、老舗洋食店のような美しい仕上がりになります。"
+  },
+  "カルボナーラNo. 1シェフの【濃厚カルボナーラ】本場の絶品パスタを再現": {
+    "title": "濃厚カルボナーラ",
+    "servings": 1,
+    "summary": "本場ローマの味を再現した、グアンチャーレの旨味と濃厚なチーズが絡み合う絶品カルボナーラ。",
+    "prepTime": "10分",
+    "cookTime": "15分",
+    "sourceInfo": "概要欄から抽出",
+    "ingredients": [
+      {
+        "name": "スパゲッティ",
+        "amount": "70g",
+        "numericAmount": 70,
+        "unit": "g",
+        "category": "pantry_other",
+        "defaultSub": "リングイネ"
+      },
+      {
+        "name": "グアンチャーレ",
+        "amount": "45g",
+        "numericAmount": 45,
+        "unit": "g",
+        "category": "meat_fish",
+        "defaultSub": "パンチェッタ、厚切りベーコン"
+      },
+      {
+        "name": "卵黄",
+        "amount": "3個",
+        "numericAmount": 3,
+        "unit": "個",
+        "category": "dairy_egg",
+        "defaultSub": "全卵"
+      },
+      {
+        "name": "グラナパダーノ",
+        "amount": "10g",
+        "numericAmount": 10,
+        "unit": "g",
+        "category": "dairy_egg",
+        "defaultSub": "パルミジャーノ・レッジャーノ、粉チーズ"
+      },
+      {
+        "name": "ペコリーノロマーノ",
+        "amount": "5g (+仕上げに適量)",
+        "numericAmount": 5,
+        "unit": "g",
+        "category": "dairy_egg",
+        "defaultSub": "粉チーズ"
+      }
+    ],
+    "seasonings": [
+      {
+        "name": "茹で汁と水を割ったもの",
+        "amount": "30〜40cc",
+        "numericAmount": 35,
+        "unit": "cc",
+        "category": "seasoning",
+        "defaultSub": "パスタの茹で汁"
+      },
+      {
+        "name": "黒胡椒",
+        "amount": "適量",
+        "numericAmount": 0,
+        "unit": "適量",
+        "category": "seasoning",
+        "defaultSub": "白胡椒"
+      },
+      {
+        "name": "塩（パスタ茹で用）",
+        "amount": "湯に対して1.5%",
+        "numericAmount": 0,
+        "unit": "%",
+        "category": "seasoning",
+        "defaultSub": "食塩"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "湯に対して1.5%の塩を加えたパスタ湯でスパゲッティを12分茹でにかけます。",
+        "timerSeconds": 720
+      },
+      {
+        "step": 2,
+        "instruction": "フライパンに大きな角切りにしたグアンチャーレを加え、カリカリになるまでじっくりと加熱して旨味の脂をとっておきます。",
+        "timerSeconds": 300
+      },
+      {
+        "step": 3,
+        "instruction": "ボウルに卵黄とチーズを加え、2の脂と茹で汁と水を割ったものを加えてベースのソースを伸ばします。",
+        "timerSeconds": 0
+      },
+      {
+        "step": 4,
+        "instruction": "湯煎にかけながら卵液がもったりとするまでハンドミキサーでよく混ぜておきます。",
+        "timerSeconds": 180
+      },
+      {
+        "step": 5,
+        "instruction": "茹で上げたパスタをボウルに加え、2のグアンチャーレも加えて再度湯煎で状態を調整し、器に盛り付けます。",
+        "timerSeconds": 0
+      },
+      {
+        "step": 6,
+        "instruction": "仕上げにペコリーノロマーノと黒胡椒をかけて完成です。",
+        "timerSeconds": 0
+      }
+    ],
+    "proTips": "湯煎を活用して卵がスクランブルエッグ状にならないよう、温度管理をしながらもったりと乳化させるのが本場の食感を再現するコツです。"
   }
 }

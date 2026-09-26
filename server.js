@@ -13,6 +13,17 @@ const PORT = process.env.PORT || 5174;
 
 app.use(cors());
 app.use(express.json({ limit: '10mb' }));
+
+// Prevent aggressive caching of HTML and Service Worker
+app.use((req, res, next) => {
+  if (req.path === '/' || req.path.endsWith('.html') || req.path.endsWith('sw.js')) {
+    res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+    res.setHeader('Pragma', 'no-cache');
+    res.setHeader('Expires', '0');
+  }
+  next();
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Auto load .env if present

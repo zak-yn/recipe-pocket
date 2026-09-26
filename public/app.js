@@ -1643,13 +1643,37 @@ function initEventListeners() {
 
 // App Initialization
 window.addEventListener('DOMContentLoaded', () => {
+  // Self-heal: If an old cached version of index.html was served by Service Worker
+  const legacySearchBtn = document.getElementById('btn-search-yt');
+  const unifiedSearchBtn = document.getElementById('btn-search-extract');
+  if (legacySearchBtn && !unifiedSearchBtn) {
+    console.warn('Stale cached index.html detected! Purging Service Worker cache and reloading...');
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(regs => {
+        for (let reg of regs) reg.unregister();
+      });
+    }
+    if ('caches' in window) {
+      caches.keys().then(keys => {
+        Promise.all(keys.map(k => caches.delete(k))).then(() => {
+          window.location.reload();
+        });
+      });
+    } else {
+      window.location.reload();
+    }
+    return;
+  }
+
   initEventListeners();
   updateSavedBadge();
   state.syncWithServer();
 
-  // Register Service Worker for offline PWA
+  // Register Service Worker with auto-update
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(err => {
+    navigator.serviceWorker.register('/sw.js').then(reg => {
+      reg.update();
+    }).catch(err => {
       console.log('SW registration optional:', err.message);
     });
   }
