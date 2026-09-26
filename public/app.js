@@ -1506,14 +1506,13 @@ function initEventListeners() {
       return;
     }
 
-    let text = `🛒【${state.currentRecipe.title}】買い物リスト (${state.selectedServings}人前)\n`;
+    let text = `【${state.currentRecipe.title}】買い物リスト (${state.selectedServings}人前)\n`;
     unbought.forEach(it => {
       text += `・${it.name} (${formatScaledAmount(it, multiplier)})\n`;
     });
-    text += `\n#RecipePocketAI で抽出`;
 
     navigator.clipboard.writeText(text).then(() => {
-      showToast('未購入リストをクリップボードにコピーしました！LINE等に貼れます', '📋');
+      showToast('買い物リストをクリップボードにコピーしました', '📋');
     });
   });
 
