@@ -963,9 +963,11 @@ function updateBookmarkButton() {
 }
 
 function updateSavedBadge() {
+  if (!el.savedCountBadge) return;
   const count = state.savedRecipes.length;
   if (count > 0) {
-    el.savedCountBadge.style.display = 'block';
+    el.savedCountBadge.textContent = count > 99 ? '99+' : count;
+    el.savedCountBadge.style.display = 'inline-flex';
   } else {
     el.savedCountBadge.style.display = 'none';
   }
@@ -1347,90 +1349,6 @@ async function extractFromText(text) {
     el.emptyState.style.display = 'block';
     alert(`エラー: ${error.message}`);
   }
-// Update Saved Count Badge
-function updateSavedBadge() {
-  if (!el.savedCountBadge) return;
-  const count = state.savedRecipes.length;
-  if (count > 0) {
-    el.savedCountBadge.textContent = count > 99 ? '99+' : count;
-    el.savedCountBadge.style.display = 'inline-flex';
-  } else {
-    el.savedCountBadge.style.display = 'none';
-  }
-}
-
-// Update Bookmark Button UI State
-function updateBookmarkButton() {
-  if (!el.btnBookmark) return;
-  const isBookmarked = state.currentRecipe && state.isRecipeBookmarked(state.currentRecipe.title);
-  if (isBookmarked) {
-    el.btnBookmark.classList.add('bookmarked');
-    if (el.btnBookmarkLabel) el.btnBookmarkLabel.textContent = '保存済み';
-  } else {
-    el.btnBookmark.classList.remove('bookmarked');
-    if (el.btnBookmarkLabel) el.btnBookmarkLabel.textContent = '保存';
-  }
-}
-
-// Render Saved Recipes List in Modal
-function renderSavedRecipesList() {
-  if (!el.savedRecipesList) return;
-  if (state.savedRecipes.length === 0) {
-    el.savedRecipesList.innerHTML = `
-      <div style="text-align: center; padding: 48px 16px; color: var(--text-tertiary);">
-        <div style="font-size: 36px; margin-bottom: 12px; opacity: 0.5;">📖</div>
-        <p style="font-weight: 600; font-size: 15px; color: var(--text-secondary); margin-bottom: 6px;">保存されたレシピはまだありません</p>
-        <p style="font-size: 13px; line-height: 1.6;">気になる料理を検索・抽出して「保存」を押すと、ここにいつでも呼び出せるようストックされます。</p>
-      </div>
-    `;
-    return;
-  }
-
-  el.savedRecipesList.innerHTML = state.savedRecipes.map((recipe, idx) => `
-    <div class="saved-recipe-item" data-index="${idx}">
-      <div class="saved-item-thumb">
-        <img src="${recipe.thumbnail || 'https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=300&auto=format&fit=crop&q=80'}" alt="${recipe.title}" loading="lazy">
-      </div>
-      <div class="saved-item-content">
-        <h4 class="saved-item-title">${recipe.title}</h4>
-        <div class="saved-item-meta">
-          <span>${recipe.prepTime || '下準備10分'}</span>
-          <span>${recipe.cookTime || '調理15分'}</span>
-          <span>${recipe.servings || 2}人前</span>
-        </div>
-      </div>
-      <div class="saved-item-actions">
-        <button type="button" class="btn-open-saved-item" data-index="${idx}" title="このレシピを開く">開く</button>
-        <button type="button" class="btn-delete-saved-item" data-index="${idx}" title="削除">&times;</button>
-      </div>
-    </div>
-  `).join('');
-
-  // Bind Open Recipe click
-  el.savedRecipesList.querySelectorAll('.btn-open-saved-item').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const idx = parseInt(btn.dataset.index, 10);
-      const recipe = state.savedRecipes[idx];
-      if (recipe) {
-        renderRecipe(recipe);
-        el.modalSaved.style.display = 'none';
-        showToast(`「${recipe.title}」を開きました`);
-      }
-    });
-  });
-
-  // Bind Delete Recipe click
-  el.savedRecipesList.querySelectorAll('.btn-delete-saved-item').forEach(btn => {
-    btn.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const idx = parseInt(btn.dataset.index, 10);
-      state.deleteSavedRecipe(idx);
-      renderSavedRecipesList();
-      updateBookmarkButton();
-      showToast('レシピを削除しました', '🗑️');
-    });
-  });
 }
 
 // Event Listeners Initialization
