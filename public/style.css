@@ -1278,13 +1278,20 @@ body {
 
 .ingredient-row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 9px 12px;
+  flex-direction: column;
+  padding: 10px 12px;
   background: #fbf9f6;
   border: 1px solid #ede8e0;
   border-radius: var(--radius-sm);
-  gap: 10px;
+  gap: 6px;
+  transition: border-color 0.15s ease;
+}
+
+.ingredient-main-line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
 }
 
 .ing-name-group {
@@ -1300,6 +1307,118 @@ body {
   gap: 8px;
   color: var(--accent-brown);
   font-weight: 700;
+}
+
+.sub-applied-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--accent-green-tint);
+  border: 1px solid rgba(45, 106, 79, 0.25);
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  margin-top: 2px;
+  animation: fadeIn 0.2s ease;
+}
+
+.sub-applied-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-primary);
+  flex-wrap: wrap;
+}
+
+.sub-applied-badge {
+  background: var(--accent-green);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: var(--radius-full);
+}
+
+.sub-applied-name {
+  font-weight: 700;
+  color: var(--accent-green);
+}
+
+.sub-applied-ratio {
+  color: var(--text-secondary);
+  font-size: 11px;
+}
+
+.btn-clear-sub {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 14px;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s;
+}
+
+.btn-clear-sub:hover {
+  color: var(--accent-rose);
+  background: rgba(164, 56, 40, 0.08);
+}
+
+.btn-sub-trigger.active-sub {
+  background: var(--accent-green-tint);
+  color: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+/* Shopping Item Row with Sub Note */
+.item-name-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.shopping-sub-hint {
+  font-size: 11px;
+  color: var(--accent-green);
+  font-weight: 600;
+}
+
+/* Substitute Modal Apply Button */
+.sub-option-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.btn-apply-sub {
+  background: #ffffff;
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.btn-apply-sub:hover {
+  background: var(--accent-green-tint);
+}
+
+.btn-apply-sub.applied {
+  background: var(--accent-green);
+  color: #ffffff;
+  border-color: var(--accent-green);
+}
+
+.sub-option-item.selected {
+  border-color: var(--accent-green);
+  background: #f7fbf8;
 }
 
 .protips-box {

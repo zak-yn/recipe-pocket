@@ -26,6 +26,19 @@ app.use((req, res, next) => {
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Save generated app icons
+app.post('/api/save-icons', (req, res) => {
+  try {
+    const { icon192, icon512, icon180 } = req.body;
+    if (icon192) fs.writeFileSync(path.join(__dirname, 'public', 'icon-192.png'), Buffer.from(icon192.replace(/^data:image\/png;base64,/, ''), 'base64'));
+    if (icon512) fs.writeFileSync(path.join(__dirname, 'public', 'icon-512.png'), Buffer.from(icon512.replace(/^data:image\/png;base64,/, ''), 'base64'));
+    if (icon180) fs.writeFileSync(path.join(__dirname, 'public', 'apple-touch-icon.png'), Buffer.from(icon180.replace(/^data:image\/png;base64,/, ''), 'base64'));
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Auto load .env if present
 const ENV_FILE = path.resolve(__dirname, '.env');
 if (fs.existsSync(ENV_FILE)) {

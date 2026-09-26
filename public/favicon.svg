@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bg-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#347b5c"/>
+      <stop offset="100%" stop-color="#23543d"/>
+    </linearGradient>
+    
+    <!-- Pot Body Gradient -->
+    <linearGradient id="pot-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#f4efe6"/>
+    </linearGradient>
+
+    <!-- Warm Accent Gradient -->
+    <linearGradient id="accent-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <!-- Herb Leaf Gradient -->
+    <linearGradient id="leaf-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#86efac"/>
+      <stop offset="100%" stop-color="#22c55e"/>
+    </linearGradient>
+
+    <filter id="soft-shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0e241a" flood-opacity="0.35"/>
+    </filter>
+  </defs>
+
+  <!-- Base App Icon Tile -->
+  <rect width="512" height="512" rx="112" fill="url(#bg-grad)"/>
+
+  <!-- Subtle Inner Border -->
+  <rect x="8" y="8" width="496" height="496" rx="104" fill="none" stroke="rgba(255, 255, 255, 0.15)" stroke-width="4"/>
+
+  <!-- Icon Graphic Group with Shadow -->
+  <g filter="url(#soft-shadow)">
+    <!-- Steam / Herb Sprouts -->
+    <path d="M 230 148 C 220 120 236 96 256 90 C 262 112 250 136 230 148 Z" fill="url(#leaf-grad)"/>
+    <path d="M 282 148 C 292 120 276 96 256 90 C 250 112 262 136 282 148 Z" fill="url(#leaf-grad)" opacity="0.85"/>
+    <circle cx="256" cy="144" r="5" fill="#86efac"/>
+
+    <!-- Pot Lid / Handle -->
+    <rect x="236" y="160" width="40" height="14" rx="7" fill="#ffffff"/>
+    <path d="M 160 200 C 160 184 196 174 256 174 C 316 174 352 184 352 200 Z" fill="url(#pot-grad)"/>
+
+    <!-- Pot Body -->
+    <path d="M 148 214 L 364 214 C 364 214 360 330 334 364 C 304 402 208 402 178 364 C 152 330 148 214 148 214 Z" fill="url(#pot-grad)"/>
+
+    <!-- Pot Handles -->
+    <path d="M 148 236 C 114 236 114 274 148 274" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+    <path d="M 364 236 C 398 236 398 274 364 274" fill="none" stroke="#ffffff" stroke-width="14" stroke-linecap="round"/>
+
+    <!-- Recipe Pocket Tag / Bookmark Accent -->
+    <rect x="232" y="228" width="48" height="68" rx="8" fill="url(#accent-grad)"/>
+    <!-- Bookmark notch -->
+    <path d="M 232 296 L 256 282 L 280 296 Z" fill="url(#pot-grad)"/>
+    
+    <!-- Mini Utensils / Recipe Mark on Tag -->
+    <circle cx="256" cy="248" r="8" fill="#ffffff" opacity="0.9"/>
+    <line x1="246" y1="264" x2="266" y2="264" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <line x1="250" y1="272" x2="262" y2="272" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+  </g>
+</svg>

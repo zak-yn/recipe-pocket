@@ -194,6 +194,7 @@ class AppState {
     this.selectedServings = 2;
     this.shoppingChecked = {}; // { [itemName]: boolean }
     this.filterUnboughtOnly = false;
+    this.activeSubstitutes = {}; // { [ingredientName]: { name, ratio, flavorNote } }
     this.savedRecipes = this.loadSavedRecipes();
   }
 
@@ -211,6 +212,47 @@ class AppState {
       localStorage.setItem('recipe_pocket_saved_v1', JSON.stringify(this.savedRecipes));
     } catch (e) {
       console.warn('Storage error:', e);
+    }
+  }
+
+  setSubstitute(ingredientName, subData) {
+    if (!this.activeSubstitutes) this.activeSubstitutes = {};
+    this.activeSubstitutes[ingredientName] = subData;
+    if (this.currentRecipe) {
+      this.currentRecipe.activeSubstitutes = { ...this.activeSubstitutes };
+      if (this.isRecipeBookmarked(this.currentRecipe.title)) {
+        const idx = this.savedRecipes.findIndex(r => r.title === this.currentRecipe.title);
+        if (idx >= 0) {
+          this.savedRecipes[idx] = { ...this.currentRecipe };
+          this.saveSavedRecipes();
+          fetch('/api/saved-recipes', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ recipe: this.currentRecipe })
+          }).catch(() => {});
+        }
+      }
+    }
+  }
+
+  removeSubstitute(ingredientName) {
+    if (this.activeSubstitutes && this.activeSubstitutes[ingredientName]) {
+      delete this.activeSubstitutes[ingredientName];
+      if (this.currentRecipe) {
+        this.currentRecipe.activeSubstitutes = { ...this.activeSubstitutes };
+        if (this.isRecipeBookmarked(this.currentRecipe.title)) {
+          const idx = this.savedRecipes.findIndex(r => r.title === this.currentRecipe.title);
+          if (idx >= 0) {
+            this.savedRecipes[idx] = { ...this.currentRecipe };
+            this.saveSavedRecipes();
+            fetch('/api/saved-recipes', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ recipe: this.currentRecipe })
+            }).catch(() => {});
+          }
+        }
+      }
     }
   }
 
@@ -267,6 +309,7 @@ class AppState {
     } else {
       const newEntry = {
         ...recipe,
+        activeSubstitutes: { ...this.activeSubstitutes },
         id: recipe.id || `recipe-${Date.now()}`,
         savedAt: new Date().toISOString()
       };
@@ -500,6 +543,7 @@ function renderRecipe(recipe, keepPlayerRunning = false) {
   state.baseServings = recipe.servings || 2;
   state.selectedServings = state.baseServings;
   state.shoppingChecked = {};
+  state.activeSubstitutes = recipe.activeSubstitutes ? { ...recipe.activeSubstitutes } : {};
 
   // Update Hero Card
   el.recipeTitle.textContent = recipe.title;
@@ -641,6 +685,7 @@ function renderShoppingList() {
 
       if (state.filterUnboughtOnly && isChecked) return;
 
+      const activeSub = state.activeSubstitutes?.[item.name];
       const scaledAmt = formatScaledAmount(item, multiplier);
 
       const row = document.createElement('div');
@@ -654,11 +699,14 @@ function renderShoppingList() {
           </svg>
         </div>
         <div class="item-details">
-          <span class="item-name">${item.name}</span>
+          <div class="item-name-col">
+            <span class="item-name">${item.name}</span>
+            ${activeSub ? `<span class="shopping-sub-hint">💡 代用: ${activeSub.name}</span>` : ''}
+          </div>
           <span class="item-amount">${scaledAmt}</span>
         </div>
-        <button type="button" class="btn-sub-trigger" title="代用を調べる" data-sub="${item.name}">
-          💡 代用
+        <button type="button" class="btn-sub-trigger ${activeSub ? 'active-sub' : ''}" title="代用を調べる" data-sub="${item.name}">
+          ${activeSub ? '💡 設定中' : '💡 代用'}
         </button>
       `;
 
@@ -699,18 +747,47 @@ function renderIngredientsTab() {
     const row = document.createElement('div');
     row.className = 'ingredient-row';
     const scaledAmt = formatScaledAmount(item, multiplier);
+    const activeSub = state.activeSubstitutes?.[item.name];
+
     row.innerHTML = `
-      <div class="ing-name-group">
-        <span class="item-name">${item.name}</span>
+      <div class="ingredient-main-line">
+        <div class="ing-name-group">
+          <span class="item-name">${item.name}</span>
+        </div>
+        <div class="ing-amount-group">
+          <span class="item-amount">${scaledAmt}</span>
+          <button type="button" class="btn-sub-trigger ${activeSub ? 'active-sub' : ''}" data-sub="${item.name}">
+            ${activeSub ? '💡 代用設定中' : '💡 代用'}
+          </button>
+        </div>
       </div>
-      <div class="ing-amount-group">
-        <span class="item-amount">${scaledAmt}</span>
-        <button type="button" class="btn-sub-trigger" data-sub="${item.name}">💡 代用</button>
-      </div>
+      ${activeSub ? `
+        <div class="sub-applied-banner">
+          <div class="sub-applied-info">
+            <span class="sub-applied-badge">代用</span>
+            <span class="sub-applied-name">${activeSub.name}</span>
+            ${activeSub.ratio ? `<span class="sub-applied-ratio">(${activeSub.ratio})</span>` : ''}
+          </div>
+          <button type="button" class="btn-clear-sub" title="代替メモを解除" data-name="${item.name}">✕</button>
+        </div>
+      ` : ''}
     `;
+
     row.querySelector('.btn-sub-trigger').addEventListener('click', () => {
       triggerQuickSubstitute(item.name);
     });
+
+    const clearBtn = row.querySelector('.btn-clear-sub');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.removeSubstitute(item.name);
+        renderIngredientsTab();
+        renderShoppingList();
+        showToast(`「${item.name}」の代用メモを解除しました`);
+      });
+    }
+
     el.ingredientsList.appendChild(row);
   });
 
@@ -720,18 +797,47 @@ function renderIngredientsTab() {
     const row = document.createElement('div');
     row.className = 'ingredient-row';
     const scaledAmt = formatScaledAmount(item, multiplier);
+    const activeSub = state.activeSubstitutes?.[item.name];
+
     row.innerHTML = `
-      <div class="ing-name-group">
-        <span class="item-name">${item.name}</span>
+      <div class="ingredient-main-line">
+        <div class="ing-name-group">
+          <span class="item-name">${item.name}</span>
+        </div>
+        <div class="ing-amount-group">
+          <span class="item-amount">${scaledAmt}</span>
+          <button type="button" class="btn-sub-trigger ${activeSub ? 'active-sub' : ''}" data-sub="${item.name}">
+            ${activeSub ? '💡 代用設定中' : '💡 代用'}
+          </button>
+        </div>
       </div>
-      <div class="ing-amount-group">
-        <span class="item-amount">${scaledAmt}</span>
-        <button type="button" class="btn-sub-trigger" data-sub="${item.name}">💡 代用</button>
-      </div>
+      ${activeSub ? `
+        <div class="sub-applied-banner">
+          <div class="sub-applied-info">
+            <span class="sub-applied-badge">代用</span>
+            <span class="sub-applied-name">${activeSub.name}</span>
+            ${activeSub.ratio ? `<span class="sub-applied-ratio">(${activeSub.ratio})</span>` : ''}
+          </div>
+          <button type="button" class="btn-clear-sub" title="代替メモを解除" data-name="${item.name}">✕</button>
+        </div>
+      ` : ''}
     `;
+
     row.querySelector('.btn-sub-trigger').addEventListener('click', () => {
       triggerQuickSubstitute(item.name);
     });
+
+    const clearBtn = row.querySelector('.btn-clear-sub');
+    if (clearBtn) {
+      clearBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        state.removeSubstitute(item.name);
+        renderIngredientsTab();
+        renderShoppingList();
+        showToast(`「${item.name}」の代用メモを解除しました`);
+      });
+    }
+
     el.seasoningsList.appendChild(row);
   });
 
@@ -853,6 +959,12 @@ function triggerQuickSubstitute(ingredientName) {
   el.modalSubQuick.style.display = 'flex';
 
   fetchSubstitutionData(ingredientName).then(data => {
+    // If not already set, auto-pin primary substitute so it persists in the recipe
+    if (data.substitutes && data.substitutes.length > 0 && !state.activeSubstitutes?.[ingredientName]) {
+      state.setSubstitute(ingredientName, data.substitutes[0]);
+      renderIngredientsTab();
+      renderShoppingList();
+    }
     renderSubstituteModalContent(data);
   }).catch(err => {
     el.modalSubContent.innerHTML = `<p style="color: var(--accent-rose); font-size: 13px;">代用情報の取得に失敗しました: ${err.message}</p>`;
@@ -870,13 +982,29 @@ function fetchOrShowSubstitute(ingredientName) {
   fetchSubstitutionData(ingredientName).then(data => {
     el.subOptionsList.innerHTML = '';
     (data.substitutes || []).forEach(sub => {
+      const isSelected = state.activeSubstitutes?.[ingredientName]?.name === sub.name;
       const item = document.createElement('div');
-      item.className = 'sub-option-item';
+      item.className = `sub-option-item ${isSelected ? 'selected' : ''}`;
       item.innerHTML = `
-        <div class="sub-opt-name">${sub.name}</div>
+        <div class="sub-option-top">
+          <div class="sub-opt-name">${sub.name}</div>
+          <button type="button" class="btn-apply-sub ${isSelected ? 'applied' : ''}">
+            ${isSelected ? '✓ レシピに反映中' : 'この案をレシピに反映'}
+          </button>
+        </div>
         <div class="sub-opt-ratio">比率: ${sub.ratio}</div>
         <div class="sub-opt-note">${sub.flavorNote || ''} ${sub.bestFor ? `(向いている調理: ${sub.bestFor})` : ''}</div>
       `;
+
+      const applyBtn = item.querySelector('.btn-apply-sub');
+      applyBtn.addEventListener('click', () => {
+        state.setSubstitute(ingredientName, sub);
+        renderIngredientsTab();
+        renderShoppingList();
+        fetchOrShowSubstitute(ingredientName);
+        showToast(`「${ingredientName}」の代替メモをレシピに反映しました！`, '💡');
+      });
+
       el.subOptionsList.appendChild(item);
     });
     el.subSkipAdvice.textContent = data.skipAdvice ? `💡 ${data.skipAdvice}` : '入れなくてもベースの味付けがしっかりしていれば美味しく仕上がります。';
@@ -929,13 +1057,29 @@ function renderSubstituteModalContent(data) {
   list.className = 'sub-options-list';
 
   (data.substitutes || []).forEach(sub => {
+    const isSelected = state.activeSubstitutes?.[data.ingredient]?.name === sub.name;
     const item = document.createElement('div');
-    item.className = 'sub-option-item';
+    item.className = `sub-option-item ${isSelected ? 'selected' : ''}`;
     item.innerHTML = `
-      <div class="sub-opt-name">${sub.name}</div>
+      <div class="sub-option-top">
+        <div class="sub-opt-name">${sub.name}</div>
+        <button type="button" class="btn-apply-sub ${isSelected ? 'applied' : ''}">
+          ${isSelected ? '✓ レシピに反映中' : 'この案をレシピに反映'}
+        </button>
+      </div>
       <div class="sub-opt-ratio">比率: ${sub.ratio}</div>
       <div class="sub-opt-note">${sub.flavorNote || ''}</div>
     `;
+
+    const applyBtn = item.querySelector('.btn-apply-sub');
+    applyBtn.addEventListener('click', () => {
+      state.setSubstitute(data.ingredient, sub);
+      renderIngredientsTab();
+      renderShoppingList();
+      renderSubstituteModalContent(data);
+      showToast(`「${data.ingredient}」の代替メモをレシピに反映しました！`, '💡');
+    });
+
     list.appendChild(item);
   });
 
@@ -944,6 +1088,26 @@ function renderSubstituteModalContent(data) {
     skipBox.className = 'sub-skip-box';
     skipBox.textContent = `💡 ${data.skipAdvice}`;
     list.appendChild(skipBox);
+  }
+
+  // Clear substitute button if currently active
+  if (state.activeSubstitutes?.[data.ingredient]) {
+    const removeRow = document.createElement('div');
+    removeRow.style.marginTop = '14px';
+    removeRow.style.textAlign = 'center';
+    removeRow.innerHTML = `
+      <button type="button" class="btn-ghost" style="font-size: 12px; padding: 6px 14px; border: 1px solid var(--border-subtle); color: var(--text-muted); width: 100%;">
+        ✕ この食材の代替メモを解除する
+      </button>
+    `;
+    removeRow.querySelector('button').addEventListener('click', () => {
+      state.removeSubstitute(data.ingredient);
+      renderIngredientsTab();
+      renderShoppingList();
+      renderSubstituteModalContent(data);
+      showToast(`「${data.ingredient}」の代替メモを解除しました`);
+    });
+    list.appendChild(removeRow);
   }
 
   el.modalSubContent.appendChild(list);
@@ -1508,7 +1672,12 @@ function initEventListeners() {
 
     let text = `【${state.currentRecipe.title}】買い物リスト (${state.selectedServings}人前)\n`;
     unbought.forEach(it => {
-      text += `・${it.name} (${formatScaledAmount(it, multiplier)})\n`;
+      const activeSub = state.activeSubstitutes?.[it.name];
+      if (activeSub) {
+        text += `・${it.name} (${formatScaledAmount(it, multiplier)}) 【代替: ${activeSub.name}】\n`;
+      } else {
+        text += `・${it.name} (${formatScaledAmount(it, multiplier)})\n`;
+      }
     });
 
     navigator.clipboard.writeText(text).then(() => {
