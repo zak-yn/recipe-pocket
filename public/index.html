@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=db_sync_2">
+  <link rel="stylesheet" href="style.css?v=ui_refine_1">
 </head>
 <body>
   <div id="app" class="app-container">
@@ -71,6 +71,12 @@
               autocomplete="off" 
               spellcheck="false"
             />
+            <button type="button" id="btn-clear-input" class="btn-clear" title="クリア" style="display: none;" aria-label="入力をクリア">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+              </svg>
+            </button>
             <button type="button" id="btn-paste-clipboard" class="btn-mini" title="クリップボードから貼る">
               <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
@@ -81,35 +87,12 @@
           </div>
           
           <div class="hero-action-row">
-            <button type="button" id="btn-search-yt" class="btn-primary" style="flex: 1.2;">
-              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+            <button type="submit" id="btn-search-extract" class="btn-primary btn-search-extract">
+              <svg id="btn-action-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <span>YouTube検索</span>
-            </button>
-            <button type="submit" id="btn-extract" class="btn-secondary" style="flex: 1;">
-              <span class="btn-icon-sparkle">✨</span>
-              <span id="btn-extract-text">URL抽出</span>
-            </button>
-            <button type="button" id="btn-toggle-manual" class="btn-ghost" title="テキスト直貼り">
-              <span>テキスト貼付</span>
-            </button>
-          </div>
-
-          <!-- Manual / Text Paste Accordion (Hidden by default) -->
-          <div id="manual-input-panel" class="manual-input-container" style="display: none;">
-            <label for="manual-recipe-text">概要欄の文章や料理メモを直接貼り付け:</label>
-            <textarea id="manual-recipe-text" rows="4" placeholder="例:
-【材料 2人前】
-豚バラ肉 150g
-大根 1/4本
-ごぼう 1/2本
-長ネギ 1/2本
-ごま油 大さじ1
-味噌 大さじ3"></textarea>
-            <button type="button" id="btn-extract-manual" class="btn-secondary" style="margin-top: 8px; width: 100%;">
-              ✨ 貼り付けたテキストから抽出
+              <span id="btn-search-extract-text">動画を検索 / レシピ抽出</span>
             </button>
           </div>
         </form>
@@ -213,14 +196,6 @@
                     <rect x="12" y="11" width="8" height="5" rx="1" ry="1" fill="currentColor"/>
                   </svg>
                   <span>ミニ表示</span>
-                </button>
-                <button type="button" id="btn-open-youtube-external" class="btn-player-ctl" title="YouTubeアプリ/別タブで開く">
-                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                    <polyline points="15 3 21 3 21 9"/>
-                    <line x1="10" y1="14" x2="21" y2="3"/>
-                  </svg>
-                  <span>YouTubeで開く</span>
                 </button>
                 <button type="button" id="btn-close-player" class="btn-player-ctl btn-player-close" title="動画を閉じる">
                   <span>&times; 閉じる</span>
@@ -477,6 +452,6 @@
     <div id="toast-container" class="toast-container"></div>
   </div>
 
-  <script type="module" src="app.js?v=db_sync_2"></script>
+  <script type="module" src="app.js?v=ui_refine_1"></script>
 </body>
 </html>

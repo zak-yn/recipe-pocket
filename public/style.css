@@ -267,12 +267,38 @@ body {
   outline: none;
   color: var(--text-primary);
   font-family: inherit;
-  font-size: 14px;
+  font-size: 15px;
   padding: 8px 0;
 }
 
 .input-wrapper input::placeholder {
   color: var(--text-muted);
+}
+
+.btn-clear {
+  background: rgba(255, 255, 255, 0.08);
+  border: none;
+  color: var(--text-muted);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+}
+
+.btn-clear:hover {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--text-primary);
+  transform: scale(1.08);
+}
+
+.btn-clear svg {
+  stroke: var(--text-secondary);
 }
 
 .btn-mini {
@@ -307,7 +333,7 @@ body {
   color: #000;
   font-weight: 700;
   font-size: 15px;
-  padding: 12px 18px;
+  padding: 13px 18px;
   border-radius: var(--radius-md);
   border: none;
   display: flex;
@@ -317,6 +343,12 @@ body {
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(245, 158, 11, 0.35);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-search-extract {
+  width: 100%;
+  font-size: 15px;
+  letter-spacing: 0.01em;
 }
 
 .btn-primary:hover {

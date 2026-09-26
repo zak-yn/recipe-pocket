@@ -300,14 +300,11 @@ const state = new AppState();
 const el = {
   urlForm: document.getElementById('url-form'),
   recipeUrl: document.getElementById('recipe-url'),
+  btnClearInput: document.getElementById('btn-clear-input'),
   btnPasteClipboard: document.getElementById('btn-paste-clipboard'),
-  btnExtract: document.getElementById('btn-extract'),
-  btnExtractText: document.getElementById('btn-extract-text'),
-  btnSearchYt: document.getElementById('btn-search-yt'),
-  btnToggleManual: document.getElementById('btn-toggle-manual'),
-  manualPanel: document.getElementById('manual-input-panel'),
-  manualRecipeText: document.getElementById('manual-recipe-text'),
-  btnExtractManual: document.getElementById('btn-extract-manual'),
+  btnSearchExtract: document.getElementById('btn-search-extract'),
+  btnSearchExtractText: document.getElementById('btn-search-extract-text'),
+  btnActionIcon: document.getElementById('btn-action-icon'),
 
   // YouTube In-App Search Results Section
   searchResultsSection: document.getElementById('search-results-section'),
@@ -332,7 +329,6 @@ const el = {
   youtubePlayerIframe: document.getElementById('youtube-player-iframe'),
   btnFloatPlayer: document.getElementById('btn-float-player'),
   btnPlayerBackSearch: document.getElementById('btn-player-back-search'),
-  btnOpenYoutubeExternal: document.getElementById('btn-open-youtube-external'),
   btnClosePlayer: document.getElementById('btn-close-player'),
   recipePrepTime: document.getElementById('recipe-prep-time'),
   recipeCookTime: document.getElementById('recipe-cook-time'),
@@ -1353,6 +1349,33 @@ async function extractFromText(text) {
 
 // Event Listeners Initialization
 function initEventListeners() {
+  // Dynamic Search/Extract Input State & Clear Button
+  const updateSearchInputUI = () => {
+    const val = el.recipeUrl.value.trim();
+    if (val.length > 0) {
+      if (el.btnClearInput) el.btnClearInput.style.display = 'flex';
+      if (val.startsWith('http://') || val.startsWith('https://')) {
+        if (el.btnSearchExtractText) el.btnSearchExtractText.textContent = '✨ レシピを抽出する';
+      } else {
+        if (el.btnSearchExtractText) el.btnSearchExtractText.textContent = `🔍 「${val.length > 12 ? val.substring(0, 12) + '...' : val}」を検索`;
+      }
+    } else {
+      if (el.btnClearInput) el.btnClearInput.style.display = 'none';
+      if (el.btnSearchExtractText) el.btnSearchExtractText.textContent = '動画を検索 / レシピ抽出';
+    }
+  };
+
+  el.recipeUrl.addEventListener('input', updateSearchInputUI);
+
+  // Clear Input Button
+  if (el.btnClearInput) {
+    el.btnClearInput.addEventListener('click', () => {
+      el.recipeUrl.value = '';
+      updateSearchInputUI();
+      el.recipeUrl.focus();
+    });
+  }
+
   // Form Submit (Smart Route: URL -> Extract, Keyword -> YouTube Search)
   el.urlForm.addEventListener('submit', (e) => {
     e.preventDefault();
@@ -1373,28 +1396,6 @@ function initEventListeners() {
       searchYouTube(input);
     }
   });
-
-  // Dedicated YouTube Search Button
-  if (el.btnSearchYt) {
-    el.btnSearchYt.addEventListener('click', () => {
-      const input = el.recipeUrl.value.trim();
-      if (!input) {
-        showToast('検索したい料理名を入力してください (例: 豚汁、カルボナーラ)', '🔍');
-        el.recipeUrl.focus();
-        return;
-      }
-      if (input.startsWith('http://') || input.startsWith('https://')) {
-        const vId = extractYouTubeId(input);
-        if (vId) {
-          startInstantVideoPlayAndExtract({ videoId: vId, videoUrl: input });
-        } else {
-          extractFromUrl(input);
-        }
-      } else {
-        searchYouTube(input);
-      }
-    });
-  }
 
   // Close Search Results Section
   if (el.btnCloseSearch) {
@@ -1426,6 +1427,7 @@ function initEventListeners() {
       const query = chip.getAttribute('data-query');
       if (query) {
         el.recipeUrl.value = query;
+        updateSearchInputUI();
         searchYouTube(query);
       }
     });
@@ -1437,6 +1439,7 @@ function initEventListeners() {
       const text = await navigator.clipboard.readText();
       if (text) {
         el.recipeUrl.value = text;
+        updateSearchInputUI();
         showToast('URLを貼り付けました', '📋');
         // Auto trigger if it's youtube url
         if (text.includes('youtube.com') || text.includes('youtu.be')) {
@@ -1451,18 +1454,6 @@ function initEventListeners() {
     } catch {
       showToast('クリップボードの読み取り権限がありません。直接入力してください。', '⚠️');
     }
-  });
-
-  // Toggle Manual Input Accordion
-  el.btnToggleManual.addEventListener('click', () => {
-    const isHidden = el.manualPanel.style.display === 'none';
-    el.manualPanel.style.display = isHidden ? 'flex' : 'none';
-    el.btnToggleManual.classList.toggle('active', isHidden);
-  });
-
-  // Manual Extract Button
-  el.btnExtractManual.addEventListener('click', () => {
-    extractFromText(el.manualRecipeText.value);
   });
 
   // Quick Preset Sample Chips
@@ -1640,14 +1631,6 @@ function initEventListeners() {
   if (el.btnFloatPlayer) {
     el.btnFloatPlayer.addEventListener('click', () => {
       toggleFloatingPlayer();
-    });
-  }
-
-  if (el.btnOpenYoutubeExternal) {
-    el.btnOpenYoutubeExternal.addEventListener('click', () => {
-      if (state.currentRecipe?.videoUrl) {
-        window.open(state.currentRecipe.videoUrl, '_blank');
-      }
     });
   }
 

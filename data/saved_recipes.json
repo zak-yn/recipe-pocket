@@ -1,1 +1,144 @@
-[]
+[
+  {
+    "title": "至高の豚汁（コク旨・隠し味仕込み）",
+    "servings": 2,
+    "summary": "ごま油で香ばしく炒めた具材と、生姜・にんにくの隠し味が効いた至高の豚汁。",
+    "prepTime": "10分",
+    "cookTime": "15分",
+    "thumbnail": "https://images.unsplash.com/photo-1547592180-85f173990554?w=800&auto=format&fit=crop&q=80",
+    "videoUrl": "https://www.youtube.com/watch?v=sample-butajiru",
+    "ingredients": [
+      {
+        "name": "豚バラ肉",
+        "amount": "150g",
+        "numericAmount": 150,
+        "unit": "g",
+        "category": "meat_fish",
+        "defaultSub": "豚こま肉、鶏もも肉"
+      },
+      {
+        "name": "大根",
+        "amount": "1/4本 (約200g)",
+        "numericAmount": 200,
+        "unit": "g",
+        "category": "vegetable",
+        "defaultSub": "かぶ、れんこん"
+      },
+      {
+        "name": "ごぼう",
+        "amount": "1/2本",
+        "numericAmount": 0.5,
+        "unit": "本",
+        "category": "vegetable",
+        "defaultSub": "里芋、きのこ類"
+      },
+      {
+        "name": "にんじん",
+        "amount": "1/2本",
+        "numericAmount": 0.5,
+        "unit": "本",
+        "category": "vegetable",
+        "defaultSub": "かぼちゃ、さつまいも"
+      },
+      {
+        "name": "こんにゃく",
+        "amount": "1/2枚",
+        "numericAmount": 0.5,
+        "unit": "枚",
+        "category": "pantry_other",
+        "defaultSub": "厚揚げ、ちくわ"
+      },
+      {
+        "name": "長ネギ",
+        "amount": "1/2本",
+        "numericAmount": 0.5,
+        "unit": "本",
+        "category": "vegetable",
+        "defaultSub": "玉ねぎ、青ネギ"
+      },
+      {
+        "name": "木綿豆腐",
+        "amount": "1/2丁 (150g)",
+        "numericAmount": 150,
+        "unit": "g",
+        "category": "dairy_egg",
+        "defaultSub": "絹豆腐、厚揚げ"
+      }
+    ],
+    "seasonings": [
+      {
+        "name": "ごま油",
+        "amount": "大さじ1",
+        "numericAmount": 1,
+        "unit": "大さじ",
+        "category": "seasoning",
+        "defaultSub": "サラダ油＋すりごま"
+      },
+      {
+        "name": "味噌",
+        "amount": "大さじ3",
+        "numericAmount": 3,
+        "unit": "大さじ",
+        "category": "seasoning",
+        "defaultSub": "合わせ味噌、赤味噌"
+      },
+      {
+        "name": "みりん",
+        "amount": "大さじ1",
+        "numericAmount": 1,
+        "unit": "大さじ",
+        "category": "seasoning",
+        "defaultSub": "酒 大さじ1 ＋ 砂糖 小さじ1"
+      },
+      {
+        "name": "和風顆粒だし",
+        "amount": "小さじ1",
+        "numericAmount": 1,
+        "unit": "小さじ",
+        "category": "seasoning",
+        "defaultSub": "昆布茶、出汁パック"
+      },
+      {
+        "name": "おろし生姜",
+        "amount": "小さじ1/2",
+        "numericAmount": 0.5,
+        "unit": "小さじ",
+        "category": "seasoning",
+        "defaultSub": "チューブ生姜、スライス生姜"
+      },
+      {
+        "name": "水",
+        "amount": "600ml",
+        "numericAmount": 600,
+        "unit": "ml",
+        "category": "seasoning",
+        "defaultSub": "水"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "大根・にんじんは厚めのいちょう切り、ごぼうは斜め薄切り、豚肉とこんにゃくは一口大に切る。",
+        "timerSeconds": 0
+      },
+      {
+        "step": 2,
+        "instruction": "深めの鍋にごま油を中火で熱し、豚肉を炒める。色が変わったら大根、にんじん、ごぼう、こんにゃくを加えて3分しっかり炒める。",
+        "timerSeconds": 180
+      },
+      {
+        "step": 3,
+        "instruction": "水600ml、和風だし、みりんを加えて煮立たせ、アクを取り除いて蓋をし、弱中火で約10分野菜が柔らかくなるまで煮る。",
+        "timerSeconds": 600
+      },
+      {
+        "step": 4,
+        "instruction": "手でちぎった豆腐と長ネギ、おろし生姜を加え、火を弱めて味噌を溶き入れ、ひと煮立ち直前に火を止める。",
+        "timerSeconds": 60
+      }
+    ],
+    "proTips": "野菜をごま油で最初にしっかり炒めることで表面がコーティングされ、旨味と香ばしさが倍増します。おろし生姜は最後に入れると爽やかな風味が際立ちます。",
+    "savedAt": "2026-09-26T01:34:05.274Z",
+    "id": "recipe-1790386445273"
+  }
+]
