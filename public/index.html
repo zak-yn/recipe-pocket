@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>RecipePocket AI - 動画から瞬時に材料＆買い物リスト抽出</title>
+  <meta name="description" content="YouTubeなどの料理動画URLから、必要な食材・分量・売り場別買い物リストをAIがパッと瞬時に抽出。スーパーでの買い物や代替調味料の提案もこれひとつで。">
+  <meta name="theme-color" content="#0d1117">
+  <link rel="manifest" href="manifest.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=db_sync_1">
+</head>
+<body>
+  <div id="app" class="app-container">
+    <!-- Top Navigation Header -->
+    <header class="header">
+      <div class="header-inner">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2a8 8 0 0 0-8 8c0 4.418 8 12 8 12s8-7.582 8-12a8 8 0 0 0-8-8z" stroke="currentColor" fill="rgba(245,158,11,0.2)"/>
+              <path d="M12 7v6m-3-3h6" stroke="#f59e0b" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="brand-text">
+            <span class="brand-title">RecipePocket</span>
+            <span class="brand-badge">AI 2.5</span>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button id="btn-open-saved" class="btn-icon" title="保存したレシピ" aria-label="保存したレシピ一覧">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span id="saved-count-badge" class="badge-dot" style="display:none;"></span>
+          </button>
+          <button id="btn-settings" class="btn-icon" title="設定" aria-label="設定">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <!-- Recipe URL Input Hero Section -->
+      <section class="hero-section">
+        <div class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span>YouTube動画URLから一瞬で買い出しリスト化</span>
+        </div>
+        <h1 class="hero-title">「これ作りたい！」を<br><span class="gradient-text">パッと食材リストに</span></h1>
+        
+        <form id="url-form" class="url-input-card">
+          <div class="input-wrapper">
+            <div class="input-icon">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <input 
+              type="text" 
+              id="recipe-url" 
+              placeholder="料理名・食材でYouTube検索 (例: 豚汁、鶏肉 時短) または URL貼付" 
+              autocomplete="off" 
+              spellcheck="false"
+            />
+            <button type="button" id="btn-paste-clipboard" class="btn-mini" title="クリップボードから貼る">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+              </svg>
+              <span>貼付</span>
+            </button>
+          </div>
+          
+          <div class="hero-action-row">
+            <button type="button" id="btn-search-yt" class="btn-primary" style="flex: 1.2;">
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <span>YouTube検索</span>
+            </button>
+            <button type="submit" id="btn-extract" class="btn-secondary" style="flex: 1;">
+              <span class="btn-icon-sparkle">✨</span>
+              <span id="btn-extract-text">URL抽出</span>
+            </button>
+            <button type="button" id="btn-toggle-manual" class="btn-ghost" title="テキスト直貼り">
+              <span>テキスト貼付</span>
+            </button>
+          </div>
+
+          <!-- Manual / Text Paste Accordion (Hidden by default) -->
+          <div id="manual-input-panel" class="manual-input-container" style="display: none;">
+            <label for="manual-recipe-text">概要欄の文章や料理メモを直接貼り付け:</label>
+            <textarea id="manual-recipe-text" rows="4" placeholder="例:
+【材料 2人前】
+豚バラ肉 150g
+大根 1/4本
+ごぼう 1/2本
+長ネギ 1/2本
+ごま油 大さじ1
+味噌 大さじ3"></textarea>
+            <button type="button" id="btn-extract-manual" class="btn-secondary" style="margin-top: 8px; width: 100%;">
+              ✨ 貼り付けたテキストから抽出
+            </button>
+          </div>
+        </form>
+
+        <!-- Quick Sample Recipes / Search Trends Carousel -->
+        <div class="sample-chips-container">
+          <span class="chips-label">人気のレシピ動画を検索:</span>
+          <div class="chips-scroll">
+            <button type="button" class="search-trend-chip" data-query="至高の豚汁">
+              🍲 豚汁
+            </button>
+            <button type="button" class="search-trend-chip" data-query="極上カルボナーラ">
+              🍝 カルボナーラ
+            </button>
+            <button type="button" class="search-trend-chip" data-query="チキン南蛮 フライパン">
+              🍗 チキン南蛮
+            </button>
+            <button type="button" class="search-trend-chip" data-query="本格 四川 麻婆豆腐">
+              🌶️ 麻婆豆腐
+            </button>
+            <button type="button" class="search-trend-chip" data-query="鶏もも肉 時短 簡単">
+              ⏱️ 鶏肉時短
+            </button>
+            <button type="button" class="search-trend-chip" data-query="豚バラ大根 煮物">
+              🥢 豚バラ大根
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- In-App YouTube Search Results Area -->
+      <section id="search-results-section" class="search-results-section" style="display: none;">
+        <div class="search-results-header">
+          <div class="search-header-left">
+            <span class="search-indicator-dot"></span>
+            <h3 id="search-results-title">「豚汁」のYouTubeレシピ動画</h3>
+          </div>
+          <button type="button" id="btn-close-search" class="btn-action-sm btn-action-muted">
+            &times; 閉じる
+          </button>
+        </div>
+        <div id="search-results-grid" class="search-results-grid">
+          <!-- Populated dynamically by search results -->
+        </div>
+      </section>
+
+      <!-- Loading / Progress Skeleton -->
+      <section id="loading-state" class="loading-state" style="display: none;">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loading-message">動画の概要欄から食材を分析中...</div>
+        <div class="loading-subtext">AIがスーパーの売り場別に自動仕分けしています</div>
+      </section>
+
+      <!-- Back to Search Results Navigation -->
+      <div id="back-to-search-bar" class="back-to-search-bar" style="display: none;">
+        <button type="button" id="btn-back-to-search" class="btn-nav-back">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2">
+            <polyline points="15 18 9 12 15 6"></polyline>
+          </svg>
+          <span id="back-to-search-text">検索結果リストに戻る</span>
+        </button>
+      </div>
+
+      <!-- Recipe Active Display Area -->
+      <section id="recipe-display" class="recipe-display" style="display: none;">
+        <!-- Recipe Header Card -->
+        <div class="recipe-hero-card">
+          <div class="recipe-thumb-box" id="recipe-thumb-container">
+            <!-- Thumbnail View -->
+            <div id="recipe-thumb-wrapper" class="recipe-thumb-wrapper">
+              <img id="recipe-thumb-img" src="" alt="料理サムネイル" class="recipe-thumb-img" />
+              <div class="recipe-play-overlay" id="btn-play-inline" title="この画面で動画を再生">
+                <svg viewBox="0 0 24 24" width="30" height="30" fill="#f59e0b">
+                  <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                </svg>
+                <span class="play-label">動画を再生</span>
+              </div>
+            </div>
+
+            <!-- Embedded YouTube Player View -->
+            <div id="recipe-player-wrapper" class="recipe-player-wrapper" style="display: none;">
+              <iframe 
+                id="youtube-player-iframe" 
+                class="youtube-player-iframe"
+                src="" 
+                title="YouTube video player" 
+                frameborder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen>
+              </iframe>
+              <div class="player-controls-bar">
+                <button type="button" id="btn-player-back-search" class="btn-player-ctl btn-player-back" style="margin-right: auto; display: none;" title="検索結果の一覧に戻る">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                  </svg>
+                  <span>検索結果に戻る</span>
+                </button>
+                <button type="button" id="btn-float-player" class="btn-player-ctl" title="画面下にミニ固定表示">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
+                    <rect x="12" y="11" width="8" height="5" rx="1" ry="1" fill="currentColor"/>
+                  </svg>
+                  <span>ミニ表示</span>
+                </button>
+                <button type="button" id="btn-open-youtube-external" class="btn-player-ctl" title="YouTubeアプリ/別タブで開く">
+                  <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                    <polyline points="15 3 21 3 21 9"/>
+                    <line x1="10" y1="14" x2="21" y2="3"/>
+                  </svg>
+                  <span>YouTubeで開く</span>
+                </button>
+                <button type="button" id="btn-close-player" class="btn-player-ctl btn-player-close" title="動画を閉じる">
+                  <span>&times; 閉じる</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="recipe-info">
+            <div class="recipe-meta-row">
+              <span id="recipe-source-badge" class="meta-pill" style="background: rgba(16, 185, 129, 0.15); color: #10b981; border-color: rgba(16, 185, 129, 0.3); display: none;">🎙️ 動画内のセリフ・字幕から復元</span>
+              <span id="recipe-prep-time" class="meta-pill">⏱️ 下準備 10分</span>
+              <span id="recipe-cook-time" class="meta-pill">🍳 調理 15分</span>
+              <button id="btn-bookmark-recipe" class="btn-bookmark" title="お気に入り保存">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+                </svg>
+                <span id="btn-bookmark-label">保存</span>
+              </button>
+            </div>
+            <h2 id="recipe-title" class="recipe-title">料理タイトル</h2>
+            <p id="recipe-summary" class="recipe-summary">料理の概要</p>
+          </div>
+        </div>
+
+        <!-- Serving Scaler Bar -->
+        <div class="servings-control-bar">
+          <div class="servings-label">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>分量の人数設定:</span>
+          </div>
+          <div class="servings-selector">
+            <button class="serving-btn" data-servings="1">1人前</button>
+            <button class="serving-btn active" data-servings="2">2人前</button>
+            <button class="serving-btn" data-servings="3">3人前</button>
+            <button class="serving-btn" data-servings="4">4人前</button>
+          </div>
+        </div>
+
+        <!-- Interactive Tabs (Shopping List / Ingredients / Steps / AI Assistant) -->
+        <div class="nav-tabs">
+          <button id="tab-btn-shopping" class="tab-btn active" data-tab="tab-shopping">
+            <span class="tab-icon">🛒</span>
+            <span>買い物リスト</span>
+            <span id="shopping-counter" class="tab-badge">0</span>
+          </button>
+          <button id="tab-btn-ingredients" class="tab-btn" data-tab="tab-ingredients">
+            <span class="tab-icon">📋</span>
+            <span>材料・調味料</span>
+          </button>
+          <button id="tab-btn-steps" class="tab-btn" data-tab="tab-steps">
+            <span class="tab-icon">🍳</span>
+            <span>調理手順</span>
+          </button>
+          <button id="tab-btn-substitute" class="tab-btn" data-tab="tab-substitute">
+            <span class="tab-icon">💡</span>
+            <span>AI代用・相談</span>
+          </button>
+        </div>
+
+        <!-- TAB 1: Shopping Mode (Categorized by Supermarket Aisle) -->
+        <div id="tab-shopping" class="tab-panel active">
+          <div class="shopping-header-row">
+            <div class="shopping-stats">
+              <span id="shopping-remain-text">残り 0 点</span>
+            </div>
+            <div class="shopping-actions">
+              <button id="btn-copy-shopping" class="btn-action-sm" title="未購入リストをクリップボードにコピー">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                  <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                </svg>
+                <span>LINE/メモに送る</span>
+              </button>
+              <button id="btn-toggle-unbought" class="btn-action-sm">
+                <span>未購入のみ</span>
+              </button>
+              <button id="btn-reset-shopping" class="btn-action-sm btn-action-muted">
+                <span>リセット</span>
+              </button>
+            </div>
+          </div>
+
+          <div id="shopping-categories-container" class="shopping-categories-container">
+            <!-- Dynamically populated by JS into supermarket aisles -->
+          </div>
+        </div>
+
+        <!-- TAB 2: Ingredients & Seasonings List -->
+        <div id="tab-ingredients" class="tab-panel">
+          <div class="ingredients-split-layout">
+            <div class="ingredients-section">
+              <h3 class="section-title">
+                <span class="section-icon">🥦</span> 主な食材
+              </h3>
+              <div id="ingredients-list" class="items-card-list">
+                <!-- Dynamically rendered -->
+              </div>
+            </div>
+
+            <div class="ingredients-section">
+              <h3 class="section-title">
+                <span class="section-icon">🧂</span> 調味料・合わせ調味料
+              </h3>
+              <div id="seasonings-list" class="items-card-list">
+                <!-- Dynamically rendered -->
+              </div>
+            </div>
+          </div>
+
+          <div class="protips-box" id="recipe-protips-container" style="display: none;">
+            <div class="protips-title">
+              <span>💡 プロのコツ・ワンポイント</span>
+            </div>
+            <p id="recipe-protips-text"></p>
+          </div>
+        </div>
+
+        <!-- TAB 3: Cooking Steps with Timers -->
+        <div id="tab-steps" class="tab-panel">
+          <div id="steps-timeline" class="steps-timeline">
+            <!-- Dynamically rendered -->
+          </div>
+        </div>
+
+        <!-- TAB 4: AI Substitute & Chef Chat -->
+        <div id="tab-substitute" class="tab-panel">
+          <div class="substitute-intro-card">
+            <h4>💡 調味料・食材の代用アドバイス</h4>
+            <p>「みりんが無い」「生クリームの代わりに牛乳でできる？」「苦手な野菜を別のものにしたい」など、タップまたは自由入力でAIに相談できます。</p>
+          </div>
+
+          <div class="substitute-quick-tags" id="substitute-quick-tags">
+            <span class="quick-tags-label">このレシピの材料から調べる:</span>
+            <div id="substitute-tags-cloud" class="tags-cloud">
+              <!-- Populated by ingredients -->
+            </div>
+          </div>
+
+          <!-- AI Substitution Result Card -->
+          <div id="substitute-result-card" class="substitute-result-card" style="display: none;">
+            <div class="sub-result-header">
+              <span id="sub-target-name" class="sub-target-badge">みりん</span>
+              <span class="sub-result-title">の代替案</span>
+            </div>
+            <div id="sub-options-list" class="sub-options-list">
+              <!-- Populated by AI -->
+            </div>
+            <div id="sub-skip-advice" class="sub-skip-box"></div>
+          </div>
+
+          <!-- Freeform AI Chef Consultation -->
+          <div class="ai-chat-section">
+            <h4 class="chat-section-title">🧑‍🍳 AI料理アドバイザーに直接質問</h4>
+            <div class="chat-input-row">
+              <input type="text" id="ai-chat-input" placeholder="例: 豚肉の代わりに鶏もも肉にする場合、焼き時間は変わる？" />
+              <button id="btn-send-ai-chat" class="btn-primary-sm">質問</button>
+            </div>
+            <div id="ai-chat-response" class="ai-chat-bubble" style="display: none;">
+              <!-- Streamed / Loaded AI response -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Empty / Guide Welcome State -->
+      <section id="empty-state" class="empty-state">
+        <div class="guide-grid">
+          <div class="guide-card">
+            <div class="guide-icon">⚡</div>
+            <h3>1. URLを貼るだけ</h3>
+            <p>YouTubeのレシピ動画（Shortsも可）のURLを入れるだけで、AIが概要欄と動画から材料を自動抽出。</p>
+          </div>
+          <div class="guide-card">
+            <div class="guide-icon">🛒</div>
+            <h3>2. 売り場別の買い物リスト</h3>
+            <p>スーパーの野菜売り場、肉・魚、調味料など売り場順に並ぶから、店内で迷わずサクサク買い物完了。</p>
+          </div>
+          <div class="guide-card">
+            <div class="guide-icon">💡</div>
+            <h3>3. 家にない調味料も即代用</h3>
+            <p>「みりんがない」「オイスターソースがない」時も、家にある調味料での配合比率をAIが即座に提案。</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Saved Recipes Modal -->
+    <div id="modal-saved" class="modal-overlay" style="display: none;">
+      <div class="modal-sheet">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <h3>保存したレシピ一覧</h3>
+          </div>
+          <button id="btn-close-saved" class="btn-modal-close" aria-label="閉じる">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="saved-recipes-list" class="saved-recipes-list">
+            <!-- Populated from LocalStorage -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Substitute Quick Modal / Bottom Sheet -->
+    <div id="modal-substitute-quick" class="modal-overlay" style="display: none;">
+      <div class="modal-sheet modal-sheet-compact">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <span class="sparkle-icon">💡</span>
+            <h3 id="modal-sub-title">代用提案</h3>
+          </div>
+          <button id="btn-close-sub-modal" class="btn-modal-close" aria-label="閉じる">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="modal-sub-content" class="modal-sub-content">
+            <!-- AI substitution loading or content -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="modal-settings" class="modal-overlay" style="display: none;">
+      <div class="modal-sheet modal-sheet-compact">
+        <div class="modal-header">
+          <div class="modal-title-row">
+            <h3>⚙️ 設定</h3>
+          </div>
+          <button id="btn-close-settings" class="btn-modal-close" aria-label="閉じる">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="setting-field">
+            <label for="custom-api-key">Gemini API Key (任意)</label>
+            <p class="field-hint">デフォルトで内蔵キーが設定されているため、通常は入力不要です。ご自身のキーを使用する場合のみ設定してください。</p>
+            <input type="password" id="custom-api-key" placeholder="AIzaSy..." />
+            <button id="btn-save-key" class="btn-secondary" style="margin-top: 8px; width: 100%;">キーを保存</button>
+          </div>
+          <div class="setting-field" style="margin-top: 16px;">
+            <button id="btn-clear-all-data" class="btn-danger-outline" style="width: 100%;">保存済みレシピデータを全て削除</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <script type="module" src="app.js?v=db_sync_1"></script>
+</body>
+</html>
