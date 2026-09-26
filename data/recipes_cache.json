@@ -1,1 +1,173 @@
-{}
+{
+  "ただの『肉入り味噌汁』じゃない、本当に旨い『豚汁』の作り方【至高の豚汁】『Pork miso soup』": {
+    "title": "抽出レシピ",
+    "servings": 2,
+    "summary": "動画から抽出した美味しい料理",
+    "prepTime": "10分",
+    "cookTime": "15分",
+    "ingredients": [
+      {
+        "name": "主材料",
+        "amount": "適量",
+        "numericAmount": 1,
+        "unit": "",
+        "category": "meat_fish",
+        "defaultSub": "お好みの具材"
+      }
+    ],
+    "seasonings": [
+      {
+        "name": "調味料",
+        "amount": "適量",
+        "numericAmount": 1,
+        "unit": "",
+        "category": "seasoning",
+        "defaultSub": "塩胡椒・醤油"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "動画の解説に従って具材を準備し、美味しく仕上げます。",
+        "timerSeconds": 0
+      }
+    ],
+    "proTips": "動画の調理ポイントを意識して丁寧に炒めるのがコツです。"
+  },
+  "【スゴ技】完璧な “オムライス” が出来上がるまでの３分間！洋食の老舗「グリルグランド」のテクニック": {
+    "title": "オムライス",
+    "servings": 1,
+    "summary": "浅草の老舗洋食店「グリルグランド」の三代目シェフが作る、流れるように美しいプロのテクニックが詰まった超人気オムライス。",
+    "prepTime": "10分",
+    "cookTime": "5分",
+    "sourceInfo": "概要欄から抽出",
+    "ingredients": [
+      {
+        "name": "鶏もも肉",
+        "amount": "50g",
+        "numericAmount": 50,
+        "unit": "g",
+        "category": "meat_fish",
+        "defaultSub": "鶏むね肉、豚こま肉"
+      },
+      {
+        "name": "マッシュルーム",
+        "amount": "20g",
+        "numericAmount": 20,
+        "unit": "g",
+        "category": "vegetable",
+        "defaultSub": "しめじ、エリンギ"
+      },
+      {
+        "name": "玉ねぎ",
+        "amount": "30g",
+        "numericAmount": 30,
+        "unit": "g",
+        "category": "vegetable",
+        "defaultSub": "長ネギ"
+      },
+      {
+        "name": "バターライス",
+        "amount": "180g",
+        "numericAmount": 180,
+        "unit": "g",
+        "category": "pantry_other",
+        "defaultSub": "白ご飯、ケチャップライス"
+      },
+      {
+        "name": "玉子Mサイズ",
+        "amount": "3個",
+        "numericAmount": 3,
+        "unit": "個",
+        "category": "dairy_egg",
+        "defaultSub": "卵Lサイズ2個半"
+      },
+      {
+        "name": "パセリ",
+        "amount": "少々",
+        "numericAmount": 0,
+        "unit": "少々",
+        "category": "vegetable",
+        "defaultSub": "乾燥パセリ、パセリみじん切り"
+      }
+    ],
+    "seasonings": [
+      {
+        "name": "オリーブオイル",
+        "amount": "少々",
+        "numericAmount": 0,
+        "unit": "少々",
+        "category": "seasoning",
+        "defaultSub": "サラダ油"
+      },
+      {
+        "name": "バター",
+        "amount": "少々",
+        "numericAmount": 0,
+        "unit": "少々",
+        "category": "dairy_egg",
+        "defaultSub": "マーガリン"
+      },
+      {
+        "name": "白ワイン",
+        "amount": "少々",
+        "numericAmount": 0,
+        "unit": "少々",
+        "category": "seasoning",
+        "defaultSub": "酒、水"
+      },
+      {
+        "name": "塩胡椒",
+        "amount": "少々",
+        "numericAmount": 0,
+        "unit": "少々",
+        "category": "seasoning",
+        "defaultSub": "塩、コショウ個別"
+      },
+      {
+        "name": "ケチャップ",
+        "amount": "50CC",
+        "numericAmount": 50,
+        "unit": "CC",
+        "category": "seasoning",
+        "defaultSub": "トマトピューレ"
+      },
+      {
+        "name": "デミグラスソース",
+        "amount": "お好みで",
+        "numericAmount": 0,
+        "unit": "お好みで",
+        "category": "seasoning",
+        "defaultSub": "市販のデミグラスソース"
+      }
+    ],
+    "steps": [
+      {
+        "step": 1,
+        "instruction": "鶏もも肉、マッシュルーム、玉ねぎをそれぞれ適度な大きさに切る。",
+        "timerSeconds": 0
+      },
+      {
+        "step": 2,
+        "instruction": "フライパンにオリーブオイルとバターを熱し、鶏もも肉、玉ねぎ、マッシュルームを炒め、塩胡椒で味を調える。",
+        "timerSeconds": 120
+      },
+      {
+        "step": 3,
+        "instruction": "白ワインを振り、バターライスとケチャップを加えてしっかりと炒め合わせ、お皿に形を整えて盛る。",
+        "timerSeconds": 180
+      },
+      {
+        "step": 4,
+        "instruction": "ボウルに卵を割りほぐす。別のフライパンに油とバターを熱し、卵液を流し入れて手早く混ぜ、オムレツの形に整える。",
+        "timerSeconds": 60
+      },
+      {
+        "step": 5,
+        "instruction": "炒めたライスの上にふんわりとしたオムレツを乗せ、お好みでデミグラスソースをかけ、パセリを散らす。",
+        "timerSeconds": 0
+      }
+    ],
+    "proTips": "卵をフライパンに流し入れた際は、強火で素早くかき混ぜて空気を含ませることで、老舗洋食店のような美しい仕上がりになります。"
+  }
+}

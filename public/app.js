@@ -1067,32 +1067,33 @@ function renderSearchResults(videos, query) {
   videos.forEach(video => {
     const card = document.createElement('div');
     card.className = 'search-video-card';
+    card.setAttribute('role', 'button');
+    card.setAttribute('tabindex', '0');
+    card.setAttribute('title', `${video.title} を再生・レシピ抽出`);
 
     card.innerHTML = `
-      <div class="video-thumb-container" title="動画を再生">
+      <div class="video-thumb-container">
         <img src="${video.thumbnail}" alt="${video.title}" class="video-thumb-img" loading="lazy" />
         ${video.length ? `<span class="video-duration-badge">${video.length}</span>` : ''}
+        <div class="video-thumb-play-overlay">
+          <div class="video-thumb-play-icon">
+            <svg width="14" height="14" viewBox="0 0 24 24">
+              <polygon points="6 3 20 12 6 21 6 3"></polygon>
+            </svg>
+          </div>
+        </div>
       </div>
       <div class="video-meta-col">
-        <div class="video-card-title" title="${video.title}">${video.title}</div>
+        <div class="video-card-title">${video.title}</div>
         <div class="video-card-sub">
           <span>${video.channel}</span>
           ${video.views ? `<span>· ${video.views}</span>` : ''}
         </div>
-        <div class="video-card-actions">
-          <button type="button" class="btn-card-extract" title="この動画から材料と買い出しリストを自動抽出">
-            <span>✨ レシピ抽出</span>
-          </button>
-          <button type="button" class="btn-card-preview" title="動画をプレビュー再生">
-            <span>▶️ 再生</span>
-          </button>
-        </div>
       </div>
     `;
 
-    // All actions on card immediately start video playback & background extraction!
-    const handleAction = (e) => {
-      e.stopPropagation();
+    // Clicking anywhere on card immediately starts video playback & background extraction!
+    const handleAction = () => {
       el.recipeUrl.value = video.videoUrl;
       startInstantVideoPlayAndExtract({
         videoId: video.videoId,
@@ -1103,15 +1104,13 @@ function renderSearchResults(videos, query) {
       });
     };
 
-    const btnExtract = card.querySelector('.btn-card-extract');
-    const btnPreview = card.querySelector('.btn-card-preview');
-    const thumbBox = card.querySelector('.video-thumb-container');
-    const titleBox = card.querySelector('.video-card-title');
-
-    btnExtract.addEventListener('click', handleAction);
-    btnPreview.addEventListener('click', handleAction);
-    thumbBox.addEventListener('click', handleAction);
-    titleBox.addEventListener('click', handleAction);
+    card.addEventListener('click', handleAction);
+    card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleAction();
+      }
+    });
 
     el.searchResultsGrid.appendChild(card);
   });
